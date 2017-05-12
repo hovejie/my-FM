@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<script src="js/jquery.min.js" ></script>
+		<script src="icon/iconfont.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			
+			body{
+				background: gray;	
+				font-family: "微软雅黑";
+			}
+			li{
+				list-style: none;
+			}
+			.icon {
+			   width: 2em; 
+			   height: 2em;
+			   vertical-align: -0.15em;
+			   fill: currentColor;
+			   overflow: hidden;
+			   color: #fff;
+			}
+			.myFm{
+				width: 350px;
+				height: 430px;
+				border-radius: 10px;
+				background: #000;
+				position: absolute;
+				top: 0;
+				left: 0;
+				bottom: 0;
+				right: 0;
+				margin: auto;
+			}
+			.header{
+				border-bottom: 2px solid #ccc;
+				padding: 10px 20px;
+				position: relative;
+			}
+			.header ul:after,.btn ul:after,.play ul:after{
+				content: "";
+				clear: both;
+				display: block;
+			}
+			.fm_list{
+				float: left;
+				padding:0px 20px 0px 0px;
+				cursor: pointer;
+			}
+			.fm_font{
+				max-width: 226px;
+			    float: left;
+			    font-size: 12px;
+			    overflow: hidden;
+			    height: 34px;
+			}
+			.fm_share{
+				float: right;
+			}
+			.song_name{
+				color:#F7F7F7;
+				font-weight: bold;
+			}
+			.song_user{
+				color: #969896;
+			}
+			/*mian*/
+				.fm_icon{
+					position: absolute;
+					top: 55px;
+    				left: 225px;
+    				z-index: 999;
+				}
+				.fm_icon img{
+					width: 50%;
+					transform: rotate(-8deg);
+    				transform-origin: 13px 0px;
+    				transition: 0.5s;
+				}
+				.mian{
+					padding:20px;
+					
+				}
+				.fm_img{
+					text-align: center;
+					/*overflow: hidden;*/
+				}
+				.song_img{
+					width: 200px;
+					height: 200px;
+					border-radius: 50%;
+					background: #fff;
+					border: 15px solid #000;
+					box-shadow:0px 0px 4px #FFF;
+					transform: rotate(0deg);
+				}
+			/*mian*/
+			/*footer*/
+				.footer{
+					margin-top: 20px;
+				}
+				.btn{
+					width: 220px;
+					text-align: center;
+					margin: auto;
+				}
+				.btn ul li{
+					float: left;
+					margin: 0px 18px;
+				}
+				.btn .icon{
+					width: 1em;
+					height: 1em;
+					color: gray;
+				}
+				.play{
+					margin:20px 10px 20px 40px; 
+				}
+				.play ul>li{
+					float: left;
+					height: 35px;
+					margin-right: 12px;
+				}
+				.next_btn .icon{
+					width: 1.5em;
+					height: 1.5em;
+					vertical-align:-webkit-baseline-middle
+				}
+				.Progress{
+					width: 200px;
+					height: 7px;
+					border-radius: 15px;
+					background: #fff;
+					display: inline-block;
+					vertical-align: bottom;
+					position: relative;
+				}
+				.Progress_son{
+					width: 0px;
+					height: 7px;
+					background: red;
+					position: absolute;
+					top: 0px;
+					left: 0px;
+				}
+				.Progress_son:after{
+					content: "";
+					position: absolute;
+					width: 6px;
+					height: 10px;
+					border-radius: 15px;
+					background: #ccc;
+					right: -5px;
+					top: -2px;
+				}
+			/*footer*/
+			/**/
+			.Spinner{
+				width: 100px;
+				background: #fff;
+				position: absolute;
+				top: 55px;
+				left: 0px;
+				font-size: 12px;
+				z-index: 33;
+			}
+			.Spinner_font{
+				text-align: center;
+				overflow: hidden;
+			}
+			.Spinner_font>li{
+				padding: 5px;
+			}
+			.Spinner_font>li:hover{
+				background: #666666;
+				color: #fff;
+			}
+			.show{
+				height: 50px !important;
+				transition: 0.5s;
+			}
+			.hide{
+				height: 0px !important;
+				transition: 0.5s;
+			}
+			.show1{
+				border-top: 1px solid #333333;
+				height: 200px !important;
+				transition: 0.5s;
+			}
+			/*歌词*/
+			.warps_lrc{
+				overflow: hidden;
+				text-align: center;
+			}
+			.lrc{
+				width: 100%;
+				height: 225px;
+				color: #fff;
+				font-size: 12px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="myFm">
+			<div class="header">
+				<ul>
+					<li class="fm_list">
+						<span>
+							<svg class="icon" aria-hidden="true">
+	  							<use xlink:href="#icon-bf-list"></use>
+							</svg>
+						</span>
+					</li>
+					<li class='fm_font'>
+						<p class="song_name"></p>
+						<p class="song_user"></p>
+					</li>
+					<li class="fm_share">
+						<span title="分享">
+							<svg class="icon" aria-hidden="true">
+	  							<use xlink:href="#icon-fenxiang1"></use>
+							</svg>
+						</span>
+					</li>
+				</ul>
+				<div class="Spinner">
+					<ul class="Spinner_font hide">
+						<li class="my_love">我的收藏</li>
+						<li class="my_xuan">切换频道</li>
+					</ul>
+					<div class="Spinner_show hide"></div>
+					<div class="Spinner_show1 hide"></div>
+				</div>
+			</div>
+			<div class="mian">
+				<!--<div class="fm_icon">
+					<img src="img/needle.png"/>
+				</div>
+				<div class="fm_img">
+					<img src="img/needle.png" class="song_img"/>
+				</div>-->
+				<div class="warps_lrc">
+					<div class="lrc"></div>
+				</div>
+				
+			</div>
+			<div class="footer">
+				<div class="btn">
+					<ul>
+						<li>
+							<span>
+							<svg class="icon" aria-hidden="true">
+	  							<use xlink:href="#icon-guanzhu"></use>
+							</svg>
+						</span>
+						</li>
+						<li>
+							<a class="down">
+								<svg class="icon" aria-hidden="true">
+		  							<use xlink:href="#icon-import"></use>
+								</svg>
+							</a>
+						</li>
+						<li>
+							<span>
+							<svg class="icon" aria-hidden="true">
+	  							<use xlink:href="#icon-iconfontdanquxunhuan2eps"></use>
+							</svg>
+						</span>
+						</li>
+						<li>
+							<span>
+							<svg class="icon" aria-hidden="true">
+	  							<use xlink:href="#icon-yinle"></use>
+							</svg>
+						</span>
+						</li>
+					</ul>
+				</div>
+				<div class="play">
+					<ul>
+						<li class="play_btn">
+							<svg class="icon" aria-hidden="true">
+ 								 <use xlink:href="#icon-bofang"></use>
+							</svg>
+						</li>
+						<li class="next_btn">
+							<svg class="icon" aria-hidden="true">
+ 								 <use xlink:href="#icon-tushujiemianxiayiqu40"></use>
+							</svg>
+						</li>
+						<li class="length_btn">
+							<div class="Progress">
+								<span class="Progress_son"></span>
+							</div>
+						</li>
+						<audio autoplay class="song" src=" " type="audio/mpeg">您的游览器不支持</audio>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			var Times;
+			var speed =0;
+			//获取随机数
+			var num = "";
+			function Maths(){
+				var maths = '';
+				for(var i=0;i<6;i++){
+					maths +=Math.floor(Math.random()*10);
+				}
+				return maths;
+			}
+			function Music(){
+				this._info = {
+					channel:""
+				}
+				this.audio =document.getElementsByClassName("song")[0];
+				this._init();
+			}
+			Music.prototype={
+				
+				//环境加载
+				_init :function(){
+					this._bind();
+					this._getsong();
+					this._play();
+				},
+				//动画效果
+				_bind:function(){
+					var that = this;
+					setInterval(function(){
+						that._play_int();
+					},2000)
+					setInterval(function(){
+						that._duration();
+						
+					},500)
+					//频道下拉列表
+					list_show($(".fm_list"),$(".Spinner_font"),$(".Spinner_show"),$(".Spinner_show1"),"show","hide","show1");
+					list_show($(".my_love"),$(".Spinner_show"),$(".Spinner_show"),$(".Spinner_show1"),"show1","hide","show1");
+					list_show($(".my_xuan"),$(".Spinner_show1"),$(".Spinner_show1"),$(".Spinner_show"),"show1","hide","show1");
+					function list_show(obj,obj1,obj2,obj3,a,b,c){
+						obj.on("click",function(){
+							if(obj1.hasClass("hide")){					
+								obj1.removeClass(b).addClass(a);
+								obj3.removeClass(c).addClass(b);
+							}else{
+								obj1.removeClass(a).addClass(b);
+								obj2.removeClass(c).addClass(b);
+								obj3.removeClass(c).addClass(b);
+							}
+						})
+					}
+					//收藏
+					//播放按钮
+					$(".play_btn").on("click",function(){
+						that._play();
+					})
+					//下一曲
+					$(".next_btn").on("click",function(){
+						that._getsong();
+						$(".play_btn").find('use').attr("xlink:href","#icon-iconfontcolor96");
+					})
+					//
+				},
+				//获取歌曲信息数据
+				_getsong:function(){
+					var that = this;
+					num = Maths();
+					$.ajax({
+						url:"music.php",
+						type:"post",
+						async:true,
+           				dataType: "json",
+           				data:{
+							name:num,
+							type:'song'
+           				}
+					}).done(function (event) {      
+						//存储歌曲信息
+							if(event.songs){
+								if(event.songs.length==0){
+									that._getsong();
+								}else{
+									var Osong = event.songs[0];
+									that._info.title = Osong["name"];//歌曲名
+									that._info.artist = Osong["artists"][0]["name"];//作者
+									that._info.picture = Osong["album"]["blurPicUrl"];//图片地址
+									that._info.sid = Osong["sid"];//歌曲长度
+									that._info.url = Osong["mp3Url"];//播放地址
+									that._info.lrc= Osong["lrc"];//歌词信息
+									$(".lrc").html(null);
+									that._loadSong();
+								}
+							}else{
+								that._getsong();
+							}
+						
+						that._getlrc();
+				      });
+					},
+				//获取歌词信息：
+				_getlrc:function(){
+					$.ajax({
+						type:"post",
+						url:"music.php",
+						async:true,
+						dataType: "json",
+						data:{
+							name:num,
+							type:'lrc'
+						}
+					}).done(function(event){
+						//处理歌词数据
+							if(event){
+//								console.log(event);
+								var lrc = event['lrc']['lyric'];
+								var lrc_arry = lrc.split('\n');
+//								var pers = /^\[\d{2}\:\d{2}\.\d{2}\]/;
+								var array_lrc = [];
+								lrc_arry.forEach(function(i){
+									var time = i.replace(']','$');       //把歌词分为：时间和歌词两个部分
+//									var times = time[0]+']';
+									var times = time.split('$');
+									if(times[0] != ''){
+										var timer = times[0]+']';
+									}
+									console.log(timer);
+//									var lyric = ;
+								});
+								$(".lrc").html(lrc);
+							}
+					}).fail(function(){
+						$(".lrc").html("没有歌词");
+					});
+				},
+				//加载歌曲信息
+				_loadSong:function(){
+					$(".song_name").html(this._info.title);
+					$(".song_user").html(this._info.artist);
+					$(".song_img").attr("src",this._info.picture);
+					$(".song").attr("src",this._info.url);
+					$(".down").attr("href",this._info.url);
+				},
+				//播放音乐
+				_play:function(){
+					var use = $(".play_btn").find('use');
+					if(this.audio.paused){
+							this.audio.play();
+							clearInterval(Times);
+							this._loopImg();
+							$(".fm_icon img").css({
+								transform:"rotate(8deg)"
+							})
+							use.attr("xlink:href","#icon-iconfontcolor96");
+						}else{
+							this.audio.pause();
+							clearInterval(Times);
+							$(".fm_icon img").css({
+								transform:"rotate(-8deg)"
+							})
+							use.attr("xlink:href","#icon-bofang");
+					}
+				},
+				_loopImg:function(){
+					Times = setInterval(function(){
+						if(speed>360){
+							speed=0;
+						}
+						speed++;
+						$(".song_img").css({
+							transform:'rotate('+speed+'deg)'
+						})
+					},100)
+				},
+				//判断歌曲是否能播放
+				_play_int:function(){
+					if(isNaN(this.audio.duration)){
+						this._getsong();
+					}
+				},
+				//进度条
+				_duration:function(){
+					var length = this.audio.currentTime/this.audio.duration*100;
+					$(".Progress_son").width(length+"%");
+					if(length>=100){
+						this._getsong();
+					}
+				}
+				//下一曲
+	
+			}
+			new Music();
+			
+		</script>
+	</body>
+</html>
